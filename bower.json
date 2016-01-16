@@ -1,0 +1,15 @@
+{
+  "name": "cc_spriteSheetPackerParser",
+  "version": "0.0.1",
+  "homepage": "https://github.com/qertis/cc_spriteSheetPackerParser",
+  "authors": [
+    "qertis"
+  ],
+  "main": "spriteSheetPackerParser.js",
+  "keywords": [
+    "spritesheetpacker"
+  ],
+  "license": "GPLv3",
+  "ignore": [
+  ]
+}

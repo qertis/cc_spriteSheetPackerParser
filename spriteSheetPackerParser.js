@@ -84,5 +84,9 @@ export default function spriteSheetPackerParser(txtPath) {
     return sprites;
   }
 
-  return loadStrokes().then(loadSprites);
+  return loadStrokes()
+    .then(loadSprites)
+    .catch(() => {
+      throw 'Catch Error';
+    });
 }
