@@ -4,9 +4,9 @@ let Layer = cc.Layer.extend({
   ctor () {
   	this._super();
 
-	let sprites = spriteSheetPackerParser('res/map.txt');
+	let sprites = spriteSheetPackerParser('./map.txt');
 	  sprites.then(name => {
-	    cc.log(name);
+	   
 
 	    let helpFrame = cc.spriteFrameCache.getSpriteFrame('help');
 	    let helpSprite = new cc.Sprite(helpFrame);
