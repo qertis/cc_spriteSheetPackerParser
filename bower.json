@@ -1,13 +1,17 @@
 {
-  "name": "cc_spriteSheetPackerParser",
+  "name": "cc_spritesheet_packer_parser",
   "version": "0.0.1",
-  "homepage": "https://github.com/qertis/cc_spriteSheetPackerParser",
+  "homepage": "https://github.com/tewst/cc_spriteSheetPackerParser",
   "authors": [
     "qertis"
   ],
   "main": "spriteSheetPackerParser.js",
   "keywords": [
-    "spritesheetpacker"
+    "spritesheetpacker",
+    "cocos2d",
+    "sprite",
+    "sheet",
+    "packer"
   ],
   "license": "GPLv3",
   "ignore": [

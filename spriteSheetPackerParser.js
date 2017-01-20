@@ -1,92 +1,87 @@
 /**
  * Sprite Sheet Packer Parser for Cocos2d-js
- *
- * Home page: https://spritesheetpacker.codeplex.com/
- *
- * Author: Denis Baskovsky <denis@baskovsky.ru>
- *
- * @param txtPath {String}
- * @returns {Promise}
+ * @author Denis Baskovsky
  */
-export default function spriteSheetPackerParser(txtPath) {
-
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    // AMD. Register as an anonymous module.
+    define([], factory);
+  } else if (typeof module === 'object' && module.exports) {
+    // Node. Does not work with strict CommonJS, but
+    // only CommonJS-like environments that support module.exports,
+    // like Node.
+    module.exports = factory();
+  } else {
+    // Browser globals (root is window)
+    root.spriteSheetPackerParser = factory();
+  }
+}(this, function() {
   /**
-   * Загрузка txt
-   * @return {Promise}
+   * @param txtPath {String}
+   * @returns {Promise}
    */
-  function loadStrokes() {
-    let strokes = new Promise((resolve, reject) => {
-      cc.loader.loadTxt(txtPath, (error, data) => {
-        if (error) {
-          return reject(error);
-        }
+  return function(txtPath) {
+    /**
+     * @return {Promise}
+     */
+    function loadStrokes() {
+      return new Promise((resolve, reject) => {
+        cc.loader.loadTxt(txtPath, (error, data) => {
+          if (error) return reject(error);
 
-        let strokes = data.split(/\n/g) || [];
+          const strokes = data.split(/\n/g) || [];
+          const outData = strokes.map(s => {
+            /* example: add_energy = 134 354 130 131*/
+            if (!s.match(/^(\w+).+=.(\d.+)/)) {
+              return null;
+            }
 
-        let outData = strokes.map(s => {
-          /* Пример валидного вхождения: add_energy = 134 354 130 131*/
-          if (!s.match(/^(\w+).+=.(\d.+)/)) {
-            return null;
-          }
+            const [name, value] = [RegExp.$1, RegExp.$2];
 
-          let name = RegExp.$1;
-          let value = RegExp.$2;
+            if (!value.match(/(\d+)\s(\d+)\s(\d+)\s(\d+)/)) {
+              return null;
+            }
 
-          if (!value.match(/(\d+)\s(\d+)\s(\d+)\s(\d+)/)) {
-            return null;
-          }
+            const x = parseFloat(RegExp.$1);
+            const y = parseFloat(RegExp.$2);
+            const w = parseFloat(RegExp.$3);
+            const h = parseFloat(RegExp.$4);
 
-          let x = parseFloat(RegExp.$1);
-          let y = parseFloat(RegExp.$2);
-          let w = parseFloat(RegExp.$3);
-          let h = parseFloat(RegExp.$4);
+            return {name, x, y, w, h};
+          });
 
-          return {name, x, y, w, h};
+          return resolve(outData.filter(oData => !!oData));
         });
-
-        return resolve(outData.filter(e => !!e));
       });
-    });
+    }
+    /**
+     * Загрузка спрайтов
+     * @return {Promise}
+     */
+    function loadSprites(coords) {
+      return new Promise((resolve, reject) => {
+        const imgPath = txtPath.replace(/txt$/, 'png');
+        cc.loader.loadImg(imgPath, (error) => {
+          if (error) return reject(error);
 
-    return strokes;
+          const texture = cc.textureCache.addImage(imgPath);
+          const textureAtlas = new cc.TextureAtlas(texture, coords.length);
+          const spriteNameArray = coords.map(e => {
+            const sprite = new cc.SpriteFrame();
+            const rect = cc.rect(e.x, e.y, e.w, e.h);
+            sprite.setTexture(textureAtlas.getTexture());
+            sprite.setRect(rect);
+            cc.spriteFrameCache.addSpriteFrame(sprite, e.name);
+
+            return e.name;
+          });
+
+          return resolve(spriteNameArray);
+        });
+      });
+    }
+
+    return Promise.resolve(loadStrokes()).then(loadSprites);
   }
 
-  /**
-   * Загрузка спрайтов
-   * @return {Promise}
-   */
-  function loadSprites(coords) {
-    let sprites = new Promise((resolve, reject) => {
-      let imgPath = txtPath.replace(/txt$/, 'png');
-      cc.loader.loadImg(imgPath, (error) => {
-        if (error) {
-          return reject(error);
-        }
-
-        let texture = cc.textureCache.addImage(imgPath);
-        let textureAtlas = new cc.TextureAtlas(texture, coords.length);
-
-        let spriteNameArray = coords.map(e => {
-          let sprite = new cc.SpriteFrame();
-          let rect = cc.rect(e.x, e.y, e.w, e.h);
-          sprite.setTexture(textureAtlas.getTexture());
-          sprite.setRect(rect);
-
-          cc.spriteFrameCache.addSpriteFrame(sprite, e.name);
-
-          return e.name;
-        });
-
-        return resolve(spriteNameArray);
-      });
-    });
-
-    return sprites;
-  }
-
-  return loadStrokes()
-    .then(loadSprites)
-    .catch(() => {
-      throw 'Catch Error';
-    });
-}
+}));

@@ -1,0 +1,8 @@
+{
+  "id": "canvas",
+  "showFPS": false,
+  "frameRate": 30,
+  "renderMode": 0,
+  "jsList": [
+  ]
+}

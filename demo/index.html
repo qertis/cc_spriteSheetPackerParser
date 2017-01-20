@@ -1,0 +1,30 @@
+<link rel="import" href="scripts.html">
+<link rel="import" href="styles.html">
+<canvas id="canvas"></canvas>
+<script>
+  const scene = cc.Scene.extend({
+    async ctor() {
+      this._super();
+
+      await spriteSheetPackerParser('res/map.txt');
+      const starFrame = cc.spriteFrameCache.getSpriteFrame('star');
+      const starSprite = new cc.Sprite(starFrame);
+      starSprite.attr({x: 400, y: 240});
+      cc.eventManager.addListener({
+        event: cc.EventListener.TOUCH_ONE_BY_ONE,
+        onTouchBegan: () => {
+          starSprite.runAction(new cc.SkewTo(2, 25, 20))
+        }
+      }, starSprite);
+
+      this.addChild(starSprite);
+    }
+  });
+  cc.game.onStart = function () {
+    cc.view.setDesignResolutionSize(800, 480, cc.ResolutionPolicy.SHOW_ALL);
+    cc.view.resizeWithBrowserSize(true);
+    cc.view.adjustViewPort(false);
+    cc.director.runScene(new scene());
+  };
+  cc.game.run();
+</script>
