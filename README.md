@@ -3,10 +3,10 @@
 
 ## Usage
 ```js
-let sprites = spriteSheetPackerParser('res/map.txt');
-sprites.then(_ => {
-  let helpFrame = cc.spriteFrameCache.getSpriteFrame('help');
-  let helpSprite = new cc.Sprite(helpFrame);
-  this.addChild(helpSprite);
-})
+await spriteSheetPackerParser('res/map.txt');
+let helpFrame = cc.spriteFrameCache.getSpriteFrame('help');
+let helpSprite = new cc.Sprite(helpFrame);
+this.addChild(helpSprite);
 ```
+
+Special for 1or2 Team
